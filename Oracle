@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earth Magic Oracle | Oráculo de la Tierra</title>
+  
+  <!-- Google Fonts: Cinzel Decorative, Cormorant Garamond, Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-dark: #080d09;
+      --bg-card: #111a13;
+      --bg-card-hover: #18261c;
+      --primary-gold: #e2c070;
+      --gold-glow: rgba(226, 192, 112, 0.3);
+      --gold-dark: #9e7f33;
+      --forest-green: #223829;
+      --emerald-accent: #3d6346;
+      --text-light: #ece3d2;
+      --text-muted: #a1b0a3;
+      --terracotta: #c46d4e;
+      --shadow-mystic: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient particles container */
+    #particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .firefly {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--primary-gold);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--primary-gold);
+      opacity: 0;
+      animation: floatFirefly 12s infinite ease-in-out;
+    }
+
+    @keyframes floatFirefly {
+      0% { transform: translateY(100vh) translateX(0) scale(0.5); opacity: 0; }
+      20% { opacity: 0.8; }
+      80% { opacity: 0.8; }
+      100% { transform: translateY(-10vh) translateX(100px) scale(1.2); opacity: 0; }
+    }
+
+    /* Layout */
+    header {
+      text-align: center;
+      padding: 3rem 1rem 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .brand-title {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--primary-gold);
+      text-shadow: 0 0 15px var(--gold-glow);
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
+
+    .brand-subtitle {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(0.85rem, 2vw, 1.05rem);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      font-weight: 300;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2rem 0;
+      position: relative;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid rgba(226, 192, 112, 0.2);
+      color: var(--text-muted);
+      padding: 0.6rem 1.4rem;
+      border-radius: 30px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tab-btn:hover, .tab-btn.active {
+      color: var(--primary-gold);
+      border-color: var(--primary-gold);
+      background: rgba(226, 192, 112, 0.08);
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Views container */
+    .view-content {
+      display: none;
+    }
+
+    .view-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--emerald-accent);
+      color: var(--text-light);
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .mode-btn.active {
+      background: var(--forest-green);
+      border-color: var(--primary-gold);
+      color: var(--primary-gold);
+    }
+
+    .draw-btn {
+      background: linear-gradient(135deg, var(--gold-dark), var(--primary-gold));
+      color: var(--bg-dark);
+      border: none;
+      padding: 0.8rem 2.2rem;
+      border-radius: 30px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 4px 20px var(--gold-glow);
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .draw-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(226, 192, 112, 0.5);
+    }
+
+    .draw-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Oracle Table Area */
+    .oracle-table {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 2rem;
+      flex-wrap: wrap;
+      min-height: 480px;
+      margin-top: 1rem;
+    }
+
+    /* Card Component 3D */
+    .card-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 260px;
+    }
+
+    .slot-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      color: var(--primary-gold);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 1rem;
+      height: 24px;
+    }
+
+    .card-container {
+      width: 260px;
+      height: 420px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border-radius: 16px;
+      box-shadow: var(--shadow-mystic);
+    }
+
+    .card-container.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      border: 2px solid var(--primary-gold);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Card Back Design */
+    .card-back {
+      background: radial-gradient(circle, var(--forest-green) 0%, var(--bg-dark) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+
+    .card-back-pattern {
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(226, 192, 112, 0.4);
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(226, 192, 112, 0.03),
+        rgba(226, 192, 112, 0.03) 10px,
+        transparent 10px,
+        transparent 20px
+      );
+    }
+
+    .card-back-symbol {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 1px solid var(--primary-gold);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--primary-gold);
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+
+    /* Card Front Design */
+    .card-front {
+      background: var(--bg-card);
+      transform: rotateY(180deg);
+      padding: 1.2rem;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+    }
+
+    .card-header-art {
+      width: 100%;
+      height: 180px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(226, 192, 112, 0.3);
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card-element-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(8, 13, 9, 0.8);
+      border: 1px solid var(--primary-gold);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--primary-gold);
+    }
+
+    .card-number {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      margin-top: 0.4rem;
+    }
+
+    .card-title {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.15rem;
+      color: var(--primary-gold);
+      margin: 0.2rem 0;
+    }
+
+    .card-keywords {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      color: var(--terracotta);
+      font-weight: 500;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-description {
+      font-size: 0.92rem;
+      line-height: 1.35;
+      color: var(--text-light);
+      overflow-y: auto;
+      max-height: 100px;
+      padding-right: 4px;
+    }
+
+    .card-description::-webkit-scrollbar {
+      width: 3px;
+    }
+    .card-description::-webkit-scrollbar-thumb {
+      background: var(--gold-dark);
+      border-radius: 3px;
+    }
+
+    /* Compendium View */
+    .compendium-search {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .search-input-wrapper i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.8rem;
+      background: var(--bg-card);
+      border: 1px solid rgba(226, 192, 112, 0.3);
+      border-radius: 8px;
+      color: var(--text-light);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary-gold);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .element-filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--bg-card);
+      border: 1px solid rgba(226, 192, 112, 0.2);
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--forest-green);
+      color: var(--primary-gold);
+      border-color: var(--primary-gold);
+    }
+
+    .compendium-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .compendium-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(226, 192, 112, 0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .compendium-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary-gold);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .compendium-thumb {
+      height: 140px;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 0.8rem;
+      position: relative;
+    }
+
+    .compendium-title {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1rem;
+      color: var(--primary-gold);
+      margin-bottom: 0.2rem;
+    }
+
+    .compendium-element {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Reading History */
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .history-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(226, 192, 112, 0.2);
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(226, 192, 112, 0.1);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .history-date {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .history-type {
+      font-family: 'Cinzel Decorative', cursive;
+      color: var(--primary-gold);
+    }
+
+    .history-cards-flex {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .history-card-mini {
+      min-width: 140px;
+      background: rgba(0,0,0,0.3);
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid rgba(226, 192, 112, 0.2);
+      text-align: center;
+    }
+
+    /* Modal Details */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 2px solid var(--primary-gold);
+      border-radius: 16px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 0 30px var(--gold-glow);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: var(--primary-gold);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(226, 192, 112, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+
+    @media (max-width: 768px) {
+      .oracle-table {
+        flex-direction: column;
+        align-items: center;
+      }
+      .card-container {
+        width: 240px;
+        height: 390px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="particles-container"></div>
+
+  <header>
+    <h1 class="brand-title">Earth Magic Oracle</h1>
+    <p class="brand-subtitle">Sabiduría ancestral de la Madre Tierra</p>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="tab-btn active" data-tab="reading">
+      <i data-lucide="sparkles"></i> Lectura
+    </button>
+    <button class="tab-btn" data-tab="compendium">
+      <i data-lucide="book-open"></i> Galería (50 Cartas)
+    </button>
+    <button class="tab-btn" data-tab="history">
+      <i data-lucide="history"></i> Historial
+    </button>
+  </nav>
+
+  <main>
+    <!-- VISTA 1: LECTURA -->
+    <section id="reading-view" class="view-content active">
+      <div class="controls-bar">
+        <button class="mode-btn active" data-mode="1">Carta Única</button>
+        <button class="mode-btn" data-mode="3">Tirada de 3 Cartas</button>
+        <button id="draw-cards-btn" class="draw-btn">
+          <i data-lucide="wand-2"></i> Mezclar y Extraer
+        </button>
+      </div>
+
+      <div id="oracle-table" class="oracle-table">
+        <!-- Las cartas se generan dinámicamente -->
+      </div>
+    </section>
+
+    <!-- VISTA 2: GALERÍA/COMPENDIO -->
+    <section id="compendium-view" class="view-content">
+      <div class="compendium-search">
+        <div class="search-input-wrapper">
+          <i data-lucide="search"></i>
+          <input type="text" id="search-card" class="search-input" placeholder="Buscar por nombre o palabra clave...">
+        </div>
+        <div class="element-filters">
+          <button class="filter-btn active" data-filter="all">Todas</button>
+          <button class="filter-btn" data-filter="Tierra">Tierra</button>
+          <button class="filter-btn" data-filter="Agua">Agua</button>
+          <button class="filter-btn" data-filter="Aire">Aire</button>
+          <button class="filter-btn" data-filter="Fuego">Fuego</button>
+          <button class="filter-btn" data-filter="Espíritu">Espíritu</button>
+        </div>
+      </div>
+
+      <div id="compendium-grid" class="compendium-grid">
+        <!-- Generado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- VISTA 3: HISTORIAL -->
+    <section id="history-view" class="view-content">
+      <div id="history-list" class="history-list">
+        <!-- Generado dinámicamente -->
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL DE DETALLE -->
+  <div id="card-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <div id="modal-body">
+        <!-- Contenido dinámico -->
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Earth Magic Oracle &copy; 2026. Conéctate con la guía espiritual de los elementos.</p>
+  </footer>
+
+  <script>
+    /* ===================================================
+       1. BASE DE DATOS DE 50 CARTAS DE LA MAGIA DE LA TIERRA
+       =================================================== */
+    const CARDS = [
+      { id: 1, name: "El Gran Roble", element: "Tierra", keywords: "Arraigo, Fortaleza, Paciencia", desc: "Siente tus raíces penetrar profundamente en la tierra. Mantente firme ante las tormentas del cambio.", color: "#2e4a23" },
+      { id: 2, name: "Luz de Luna", element: "Agua", keywords: "Intuición, Sueños, Misterio", desc: "Confía en las mareas invisibles de tus sentimientos. Tus sueños guardan mensajes ocultos.", color: "#1c324a" },
+      { id: 3, name: "Viento del Norte", element: "Aire", keywords: "Claridad, Verdad, Renovación", desc: "Una brisa fría disipa la confusión. Es tiempo de hablar con absoluta honestidad.", color: "#3a535e" },
+      { id: 4, name: "Fuego Sagrado", element: "Fuego", keywords: "Pasión, Transformación, Energía", desc: "Deja que el fuego purificador queme lo obsoleto y encienda la llama de tus deseos verdaderos.", color: "#5e2a1e" },
+      { id: 5, name: "Flor de Loto", element: "Espíritu", keywords: "Renacimiento, Pureza, Trascendencia", desc: "Aun desde el lodo más profundo, florece la belleza intacta del espíritu.", color: "#4d2c5e" },
+      { id: 6, name: "Cascada Cristalina", element: "Agua", keywords: "Fluidez, Purificación, Soltar", desc: "Permite que las emociones fluyan libremente. No retengas aquello que busca liberarse.", color: "#234d4a" },
+      { id: 7, name: "Cueva del Anciano", element: "Tierra", keywords: "Introspección, Sabiduría, Refugio", desc: "Retírate al silencio interior para escuchar las respuestas que residen en tu silencio.", color: "#30261f" },
+      { id: 8, name: "Espíritu del Lobo", element: "Espíritu", keywords: "Lealtad, Instinto, Tribu", desc: "Sigue tus instintos primordiales y rodeate de aquellos que caminan a tu mismo ritmo.", color: "#383642" },
+      { id: 9, name: "Semilla del Futuro", element: "Tierra", keywords: "Potencial, Esperanza, Paciencia", desc: "Todo gran bosque comenzó siendo una pequeña semilla escondida bajo la tierra.", color: "#384d28" },
+      { id: 10, name: "Mariposa del Alba", element: "Aire", keywords: "Metamorfosis, Ligereza, Gracia", desc: "Acepta la transformación de tu ser. Las alas nacen cuando dejas ir la crisálida.", color: "#544628" },
+      { id: 11, name: "Rayo del Solsticio", element: "Fuego", keywords: "Vitalidad, Plenitud, Éxito", desc: "El punto máximo de luz ilumina tu camino. Celebra la abundancia que te rodea.", color: "#614e1f" },
+      { id: 12, name: "Espíritu de las Estrellas", element: "Espíritu", keywords: "Guía Divina, Destino, Fe", desc: "Recuerda que estás hecho del mismo polvo que las estrellas del cosmos.", color: "#282a4d" },
+      { id: 13, name: "BOSQUE ANCESTRAL", element: "Tierra", keywords: "Memoria, Linaje, Protección", desc: "Tus antepasados caminan contigo. Busca la protección en la sabiduría del pasado.", color: "#1e3820" },
+      { id: 14, name: "Río Serpenteante", element: "Agua", keywords: "Camino, Adaptación, Tiempo", desc: "El agua nunca lucha contra la roca, la rodea. Encuentra la flexibilidad en tu sendero.", color: "#1f3b3d" },
+      { id: 15, name: "Tormenta Electrizante", element: "Fuego", keywords: "Ruptura, Revelación, Cambio Rápido", desc: "El aire se despeja tras la tempestad. Prepárate para una rápida toma de conciencia.", color: "#3b2047" },
+      { id: 16, name: "Canto del Búho", element: "Aire", keywords: "Visión Nocturna, Discernimiento", desc: "Observa más allá de las apariencias. La verdad se ve mejor en la quietud de la sombra.", color: "#36312a" },
+      { id: 17, name: "Montaña Sagrada", element: "Tierra", keywords: "Logro, Perspectiva, Firmeza", desc: "Has ascendido alto. Disfruta la vista panorámica de tu evolución personal.", color: "#2f3833" },
+      { id: 18, name: "Espíritu del Águila", element: "Espíritu", keywords: "Libertad, Visión Elevada, Misión", desc: "Eleva tu vuelo por encima de los detalles mezquinos y divisa el propósito superior.", color: "#473b22" },
+      { id: 19, name: "Niebla del Bosque", element: "Agua", keywords: "Pausa, Incertidumbre, Confianza", desc: "Cuando no veas el camino a seguir, da un paso a la vez sintiendo el suelo bajo tus pies.", color: "#2d3836" },
+      { id: 20, name: "Llama Interna", element: "Fuego", keywords: "Voluntad, Creatividad, Coraje", desc: "No dejes que el mundo apague el fuego sagrado de tus convicciones.", color: "#54281b" },
+      { id: 21, name: "Hojas de Otoño", element: "Tierra", keywords: "Desprendimiento, Cierre, Aceptación", desc: "Hay belleza en saber soltar lo que cumplió su ciclo. Prepara el terreno para lo nuevo.", color: "#4f311c" },
+      { id: 22, name: "Nube Viajera", element: "Aire", keywords: "Pensamientos, Desapego, Transitoriedad", desc: "Tus pensamientos son como nubes en el cielo: déjalos pasar sin apegarte a ellos.", color: "#29353d" },
+      { id: 23, name: "Cristal de Cuarzo", element: "Tierra", keywords: "Enfoque, Amplificación, Intención", desc: "Pura energía focalizada. Clarifica tu intención y el universo responderá.", color: "#314238" },
+      { id: 24, name: "Espíritu del Venado", element: "Espíritu", keywords: "Gentileza, Compasión, Inocencia", desc: "La verdadera fuerza radica en la suavidad de corazón. Trátate con amabilidad.", color: "#3b3327" },
+      { id: 25, name: "Océano Profundo", element: "Agua", keywords: "Inconsciente, Inmensidad, Misterios", desc: "Explora los abismos de tu mente subconsciente. Allí yacen tesoros ocultos.", color: "#122538" },
+      { id: 26, name: "Volcán Sagrado", element: "Fuego", keywords: "Catarsis, Liberación de Ira, Creación", desc: "La presión reprimida busca salir. Canálizala de forma creativa y constructiva.", color: "#4d1d1a" },
+      { id: 27, name: "Brisa de Primavera", element: "Aire", keywords: "Nuevas Ideas, Entusiasmo, Esperanza", desc: "Un soplo de inspiración fresca entra en tu vida. Es momento de sembrar intenciones.", color: "#273d2f" },
+      { id: 28, name: "Espíritu del Oso", element: "Tierra", keywords: "Hibernación, Sanación, Fuerza Interior", desc: "Tómate un tiempo para descansar y regenerar tus energías antes de volver a actuar.", color: "#332a22" },
+      { id: 29, name: "Gotas de Roció", element: "Agua", keywords: "Sensibilidad, Renovación Diaria", desc: "Cada mañana trae una nueva oportunidad de comenzar limpios y renovados.", color: "#203838" },
+      { id: 30, name: "Danza del Viento", element: "Aire", keywords: "Sincronía, Juego, Movimiento", desc: "Muévete con los cambios en lugar de resistirte a ellos. Diviértete en el proceso.", color: "#2c3d3a" },
+      { id: 31, name: "Sol al Atardecer", element: "Fuego", keywords: "Gratitud, Balance, Descanso", desc: "Agradece las lecciones vividas hoy y prepárate para la paz de la noche.", color: "#4f311f" },
+      { id: 32, name: "Espíritu del Colibrí", element: "Espíritu", keywords: "Alegría, Dulzura de la Vida, Mágia", desc: "Encuentra la dulzura en los pequeños detalles cotidianos de la existencia.", color: "#1d4737" },
+      { id: 33, name: "Raíces Profundas", element: "Tierra", keywords: "Estabilidad, Pertenenia, Casa", desc: "Nutre tus lazos de pertenencia y tu conexión corporal con el mundo físico.", color: "#2d241d" },
+      { id: 34, name: "Marea Alta", element: "Agua", keywords: "Abundancia Emocional, Crecimiento", desc: "Tus sentimientos se intensifican. Aprovecha este impulso emocional para crear.", color: "#182c3d" },
+      { id: 35, name: "Trueno del Oeste", element: "Fuego", keywords: "Llamado a la Acción, Despertar", desc: "Una llamada de atención resonante. Es hora de despertar y asumir tu poder.", color: "#422420" },
+      { id: 36, name: "Pluma de Garra", element: "Aire", keywords: "Mensaje Divino, Sincronicidad", desc: "Presta atención a las señales que se manifiestan repetidamente a tu alrededor.", color: "#283438" },
+      { id: 37, name: "Espíritu del Zorro", element: "Espíritu", keywords: "Astucia, Camuflaje, Agilidad", desc: "Sé observador y actúa con astucia frente a situaciones complejas o desconocidas.", color: "#422d1b" },
+      { id: 38, name: "Sendero de Musgo", element: "Tierra", keywords: "Caminos Suaves, Comodidad", desc: "Avanza con soltura. El universo ha preparado un camino amoroso para ti.", color: "#21361e" },
+      { id: 39, name: "Lago Espejo", element: "Agua", keywords: "Reflejo, Calma, Auto-conocimiento", desc: "En el silencio de las aguas serenas podrás ver el verdadero reflejo de tu alma.", color: "#1f3036" },
+      { id: 40, name: "Espíritu del Serpiente", element: "Fuego", keywords: "Mudar de Piel, Sanación Kundalini", desc: "Despréndete de tus viejas identidades. La sanación exige dejar ir lo caduco.", color: "#3d2b1f" },
+      { id: 41, name: "Viento Solar", element: "Aire", keywords: "Expansión, Visión Cósmica", desc: "Tus ideas trascienden tus límites actuales. Atrévete a pensar en grande.", color: "#3b3820" },
+      { id: 42, name: "Espíritu del Búfalo", element: "Tierra", keywords: "Provisión, Gratitud, Abundancia", desc: "Confía en que todas tus necesidades materiales serán cubiertas a su tiempo.", color: "#302820" },
+      { id: 43, name: "Hielo Milenario", element: "Agua", keywords: "Pausa Temporal, Preservación", desc: "Hay cosas que requieren ser congeladas un momento hasta que llegue la temporada justa.", color: "#1e333b" },
+      { id: 44, name: "Foco de Aurora", element: "Espíritu", keywords: "Inspiración Divina, Iluminación", desc: "Una ráfaga de iluminación espiritual aclara tus dudas más profundas.", color: "#1f4234" },
+      { id: 45, name: "Espíritu de la Ballena", element: "Agua", keywords: "Canto Ancestral, Memoria Cósmica", desc: "Sintoniza con las frecuencias antiguas de la tierra para recordar tu origen.", color: "#182636" },
+      { id: 46, name: "Espíritu del Puma", element: "Fuego", keywords: "Liderazgo, Poder Personal, Solitud", desc: "Camina con elegancia y autoridad en tu propio espacio sin pedir permiso.", color: "#402a1b" },
+      { id: 47, name: "Espíritu de la Araña", element: "Espíritu", keywords: "Tejer el Destino, Interconexión", desc: "Cada hilo de tu elección teje la red de tu destino. Crea con conciencia.", color: "#28202d" },
+      { id: 48, name: "Noche Estrellada", element: "Aire", keywords: "Infinidad, Descanso del Alma", desc: "Encuentra refugio en la inmensidad de la noche y la paz del infinito.", color: "#171c2b" },
+      { id: 49, name: "Tierra Fértil", element: "Tierra", keywords: "Manifestación, Nutrición", desc: "El terreno está listo para recibir tus proyectos. Planta con amor y dedicación.", color: "#2d2319" },
+      { id: 50, name: "Espirál de la Vida", element: "Espíritu", keywords: "Evolución, Ciclos Eternos, Unidad", desc: "No vuelves al mismo lugar; subes en la espiral de la conciencia. Todo está conectado.", color: "#3b2b4d" }
+    ];
+
+    // Iconos de Elementos (SVG Lucide)
+    const ELEMENT_ICONS = {
+      Tierra: 'mountain',
+      Agua: 'droplets',
+      Aire: 'wind',
+      Fuego: 'flame',
+      Espíritu: 'sparkles'
+    };
+
+    /* ===================================================
+       2. ESTADO DE LA APLICACIÓN
+       =================================================== */
+    let currentMode = 1; // 1 o 3 cartas
+    let currentReading = [];
+    let history = [];
+
+    /* ===================================================
+       3. INICIALIZACIÓN Y EVENTOS
+       =================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      createParticles();
+      setupTabs();
+      setupReadingControls();
+      renderOracleSlots();
+      renderCompendium(CARDS);
+      setupCompendiumFilters();
+      setupModal();
+    });
+
+    // Crear partículas flotantes
+    function createParticles() {
+      const container = document.getElementById("particles-container");
+      for (let i = 0; i < 25; i++) {
+        const firefly = document.createElement("div");
+        firefly.className = "firefly";
+        firefly.style.left = `${Math.random() * 100}vw`;
+        firefly.style.animationDelay = `${Math.random() * 10}s`;
+        firefly.style.animationDuration = `${8 + Math.random() * 8}s`;
+        container.appendChild(firefly);
+      }
+    }
+
+    // Pestañas principales
+    function setupTabs() {
+      const tabBtns = document.querySelectorAll(".tab-btn");
+      const views = document.querySelectorAll(".view-content");
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          tabBtns.forEach(b => b.classList.remove("active"));
+          views.forEach(v => v.classList.remove("active"));
+
+          btn.classList.add("active");
+          const target = btn.dataset.tab;
+          document.getElementById(`${target}-view`).classList.add("active");
+        });
+      });
+    }
+
+    /* ===================================================
+       4. LÓGICA DE LECTURA DE CARTAS
+       =================================================== */
+    function setupReadingControls() {
+      const modeBtns = document.querySelectorAll(".mode-btn");
+      const drawBtn = document.getElementById("draw-cards-btn");
+
+      modeBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          modeBtns.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentMode = parseInt(btn.dataset.mode);
+          renderOracleSlots();
+        });
+      });
+
+      drawBtn.addEventListener("click", performReading);
+    }
+
+    function renderOracleSlots() {
+      const table = document.getElementById("oracle-table");
+      table.innerHTML = "";
+
+      const labels = currentMode === 1 
+        ? ["Orientación Espiritual"] 
+        : ["Semilla (Origen)", "Brote (Presente)", "Florecimiento (Futuro)"];
+
+      for (let i = 0; i < currentMode; i++) {
+        const slot = document.createElement("div");
+        slot.className = "card-slot";
+        slot.innerHTML = `
+          <div class="slot-label">${labels[i]}</div>
+          <div class="card-container" id="slot-${i}" onclick="flipSingleCard(${i})">
+            <div class="card-inner">
+              <div class="card-face card-back">
+                <div class="card-back-pattern">
+                  <div class="card-back-symbol">
+                    <i data-lucide="trees" style="width:36px; height:36px;"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="card-face card-front" id="card-front-${i}">
+                <!-- Contenido de la carta cargado tras la tirada -->
+              </div>
+            </div>
+          </div>
+        `;
+        table.appendChild(slot);
+      }
+      lucide.createIcons();
+    }
+
+    // LÓGICA ALEATORIA DE EXTRACCIÓN (Math.random)
+    function performReading() {
+      const drawBtn = document.getElementById("draw-cards-btn");
+      drawBtn.disabled = true;
+
+      // Resetear volteo
+      const containers = document.querySelectorAll(".card-container");
+      containers.forEach(c => c.classList.remove("flipped"));
+
+      setTimeout(() => {
+        // Seleccionar cartas al azar sin repetir
+        let available = [...CARDS];
+        currentReading = [];
+
+        for (let i = 0; i < currentMode; i++) {
+          const randomIndex = Math.floor(Math.random() * available.length);
+          const selectedCard = available.splice(randomIndex, 1)[0];
+          currentReading.push(selectedCard);
+          
+          // Renderizar cara frontal
+          renderCardFront(i, selectedCard);
+        }
+
+        // Voltear cartas gradualmente
+        currentReading.forEach((_, idx) => {
+          setTimeout(() => {
+            document.getElementById(`slot-${idx}`).classList.add("flipped");
+          }, idx * 400 + 300);
+        });
+
+        // Guardar en historial
+        saveHistory(currentReading, currentMode);
+
+        setTimeout(() => {
+          drawBtn.disabled = false;
+        }, currentMode * 400 + 500);
+
+      }, 400);
+    }
+
+    function renderCardFront(slotIdx, card) {
+      const frontElem = document.getElementById(`card-front-${slotIdx}`);
+      const iconName = ELEMENT_ICONS[card.element] || 'sparkles';
+
+      frontElem.innerHTML = `
+        <div class="card-header-art" style="background: linear-gradient(to bottom, rgba(0,0,0,0.2), var(--bg-card)), ${card.color};">
+          <div class="card-element-icon">
+            <i data-lucide="${iconName}" style="width:16px; height:16px;"></i>
+          </div>
+          <i data-lucide="${iconName}" style="width:50px; height:50px; color: rgba(226,192,112,0.4);"></i>
+        </div>
+        <div class="card-number">N° ${card.id} • ${card.element}</div>
+        <h3 class="card-title">${card.name}</h3>
+        <div class="card-keywords">${card.keywords}</div>
+        <p class="card-description">${card.desc}</p>
+      `;
+      lucide.createIcons();
+    }
+
+    function flipSingleCard(idx) {
+      const container = document.getElementById(`slot-${idx}`);
+      if (currentReading[idx]) {
+        container.classList.toggle("flipped");
+      }
+    }
+
+    /* ===================================================
+       5. GALERÍA / COMPENDIO DE CARTAS
+       =================================================== */
+    function renderCompendium(cardsToRender) {
+      const grid = document.getElementById("compendium-grid");
+      grid.innerHTML = "";
+
+      cardsToRender.forEach(card => {
+        const iconName = ELEMENT_ICONS[card.element] || 'sparkles';
+        const item = document.createElement("div");
+        item.className = "compendium-item";
+        item.onclick = () => openModal(card);
+        item.innerHTML = `
+          <div class="compendium-thumb" style="background: linear-gradient(135deg, ${card.color}, var(--bg-dark)); display:flex; align-items:center; justify-content:center;">
+            <i data-lucide="${iconName}" style="width:40px; height:40px; color: var(--primary-gold);"></i>
+          </div>
+          <div class="compendium-title">${card.name}</div>
+          <div class="compendium-element">N° ${card.id} • Elemento ${card.element}</div>
+        `;
+        grid.appendChild(item);
+      });
+      lucide.createIcons();
+    }
+
+    function setupCompendiumFilters() {
+      const searchInput = document.getElementById("search-card");
+      const filterBtns = document.querySelectorAll(".filter-btn");
+
+      let currentElement = "all";
+
+      const applyFilters = () => {
+        const query = searchInput.value.toLowerCase();
+        const filtered = CARDS.filter(card => {
+          const matchesSearch = card.name.toLowerCase().includes(query) || 
+                                card.keywords.toLowerCase().includes(query) ||
+                                card.desc.toLowerCase().includes(query);
+          const matchesElement = currentElement === "all" || card.element === currentElement;
+          return matchesSearch && matchesElement;
+        });
+        renderCompendium(filtered);
+      };
+
+      searchInput.addEventListener("input", applyFilters);
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          filterBtns.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentElement = btn.dataset.filter;
+          applyFilters();
+        });
+      });
+    }
+
+    /* ===================================================
+       6. HISTORIAL DE LECTURAS
+       =================================================== */
+    function saveHistory(cards, mode) {
+      const readingRecord = {
+        date: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' }),
+        mode: mode === 1 ? "Carta Única" : "Tirada de 3 Cartas",
+        cards: [...cards]
+      };
+      history.unshift(readingRecord);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById("history-list");
+      if (history.length === 0) {
+        list.innerHTML = `<p style="text-align:center; color: var(--text-muted); padding: 2rem;">Aún no has realizado ninguna lectura en esta sesión.</p>`;
+        return;
+      }
+
+      list.innerHTML = "";
+      history.forEach(item => {
+        const cardElem = document.createElement("div");
+        cardElem.className = "history-card";
+        
+        let cardsHTML = item.cards.map(c => `
+          <div class="history-card-mini">
+            <strong style="color:var(--primary-gold); font-size:0.9rem;">${c.name}</strong>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">${c.element}</p>
+          </div>
+        `).join('');
+
+        cardElem.innerHTML = `
+          <div class="history-header">
+            <span class="history-type">${item.mode}</span>
+            <span class="history-date">${item.date}</span>
+          </div>
+          <div class="history-cards-flex">${cardsHTML}</div>
+        `;
+        list.appendChild(cardElem);
+      });
+    }
+
+    /* ===================================================
+       7. MODAL DE DETALLES DE CARTA
+       =================================================== */
+    function setupModal() {
+      const modal = document.getElementById("card-modal");
+      const closeBtn = document.getElementById("modal-close-btn");
+
+      closeBtn.addEventListener("click", () => {
+        modal.classList.remove("active");
+      });
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.remove("active");
+      });
+    }
+
+    function openModal(card) {
+      const modal = document.getElementById("card-modal");
+      const body = document.getElementById("modal-body");
+      const iconName = ELEMENT_ICONS[card.element] || 'sparkles';
+
+      body.innerHTML = `
+        <div style="text-align:center; margin-bottom: 1.5rem;">
+          <div style="width:70px; height:70px; margin: 0 auto 1rem; border-radius:50%; background:${card.color}; border:2px solid var(--primary-gold); display:flex; align-items:center; justify-content:center; color:var(--primary-gold);">
+            <i data-lucide="${iconName}" style="width:36px; height:36px;"></i>
+          </div>
+          <span style="font-family:'Montserrat', sans-serif; font-size:0.8rem; color:var(--text-muted); letter-spacing:2px;">CARTA N° ${card.id} • ELEMENTO ${card.element.toUpperCase()}</span>
+          <h2 style="font-family:'Cinzel Decorative', cursive; color:var(--primary-gold); margin: 0.5rem 0;">${card.name}</h2>
+          <p style="font-family:'Montserrat', sans-serif; color:var(--terracotta); font-size:0.9rem; font-weight:500;">${card.keywords}</p>
+        </div>
+        <hr style="border:none; border-top:1px solid rgba(226,192,112,0.2); margin: 1rem 0;">
+        <p style="font-size:1.1rem; line-height:1.6; color:var(--text-light); text-align:justify;">${card.desc}</p>
+      `;
+      lucide.createIcons();
+      modal.classList.add("active");
+    }
+  </script>
+</body>
+</html>
